@@ -19,7 +19,6 @@ canvas.width = 600;
 canvas.height = 600;
 document.body.appendChild(canvas);
 
-
 let bgReady, heroReady, monsterReady,obstacleReady;
 let bgImage, heroImage, monsterImage,obstacleImage;
 let heroX = canvas.width / 2;
@@ -79,25 +78,6 @@ function loadImages() {
   obstacleImage.src = "images/obstacle.png";
 }
 
-/** 
- * Setting up our characters.
- * 
- * Note that heroX represents the X position of our hero.
- * heroY represents the Y position.
- * We'll need these values to know where to "draw" the hero.
- * 
- * The same applies to the monster.
- */
-
-
-/** 
- * Keyboard Listeners
- * You can safely ignore this part, for now. 
- * 
- * This is just to let JavaScript know when the user has pressed a key.
-*/
-
-
 
 function setupKeyboardListeners() {
   // Check for keys pressed where key represents the keycode captured
@@ -111,9 +91,8 @@ function setupKeyboardListeners() {
   }, false);
 }
 
-function submitName() {
 
-}
+
 
 let update = function () {
  
@@ -128,8 +107,28 @@ let update = function () {
       herocaughtMonster(); //몬스터 
       checkCollision();
 
+      
 
   }
+
+
+  function restartGame() {
+    document.getElementById("highscore").innerHTML = `High Score = ${highscore}`
+    
+    count=0;
+    startTime = Date.now();
+    SECONDS_PER_ROUND = 20;
+    elapsedTime = 0;
+    keysDown = {};
+  
+    let heroX = canvas.width / 2;
+    let heroY = canvas.height / 2;
+    let monsterX = 100;
+    let monsterY = 100;
+    let obstacleX = randomPosition(500);
+    let obstacleY = randomPosition(500);
+  }
+
 
 function screenoff() {
       if (heroX<=0) {
@@ -260,8 +259,12 @@ var render = function () {
   const isOutOfTime = SECONDS_PER_ROUND - elapsedTime <= 0;
 
   if (isOutOfTime) {
-    ctx.fillText(`Hi GAME OVER!!!`, 300, 30);
+    ctx.font = "40px";
+    ctx.fillStyle = "red";
+    ctx.textAlign = "center";
+    ctx.fillText(` GAME OVER!!!`, 300, 30);
   } else {
+    ctx.font = "30px";
     ctx.fillText(
       `Seconds Remaining: ${SECONDS_PER_ROUND - elapsedTime}`,
       300,
