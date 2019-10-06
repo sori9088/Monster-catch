@@ -4,3 +4,8 @@
   z-index: 9 !important;
 
 }
+
+.container {
+
+  display: flex;
+}

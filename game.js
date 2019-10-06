@@ -19,6 +19,7 @@ canvas.width = 600;
 canvas.height = 600;
 document.body.appendChild(canvas);
 
+
 let bgReady, heroReady, monsterReady,obstacleReady;
 let bgImage, heroImage, monsterImage,obstacleImage;
 let heroX = canvas.width / 2;
@@ -153,7 +154,7 @@ function upScore() {
   monsterX = randomPosition(550)
   monsterY =  randomPosition(550)
 
-  document.getElementById("count").innerHTML = count;
+  document.getElementById("count").innerHTML =`Score : ${count}`;
   
   if (highscore < count) {
     highscore = count;
@@ -171,7 +172,11 @@ function checkCollision() {
   if(herocaughtObstacle) {
     obstacleX = randomPosition(500)
     obstacleY = randomPosition(500)
-    count -= 1; 
+    count -= 1;
+    monsterX = randomPosition(550)
+    monsterY =  randomPosition(550)
+  
+    document.getElementById("count").innerHTML =`Score : ${count}`;
   }
 }
 
@@ -220,7 +225,7 @@ function stopClock() {
 
 timer = setInterval(() => {
     elapsedTime += 1;
-    document.getElementById("timer").innerHTML = SECONDS_PER_ROUND - elapsedTime;
+    document.getElementById("timer").innerHTML = ` Remaining Time : ${SECONDS_PER_ROUND - elapsedTime}`;
   }, 1000);
 
 
@@ -268,7 +273,7 @@ var render = function () {
 
 function gameOver() {
   clearInterval(timer);
-  resetGame();
+  return;
 }
 
 
