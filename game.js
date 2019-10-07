@@ -13,11 +13,10 @@ We also load all of our images.
 let canvas;
 let ctx;
 
-canvas = document.createElement("canvas");
+canvas = document.getElementById("canvas");
 ctx = canvas.getContext("2d");
 canvas.width = 600;
 canvas.height = 600;
-document.body.appendChild(canvas);
 
 let bgReady, heroReady, monsterReady,obstacleReady;
 let bgImage, heroImage, monsterImage,obstacleImage;
@@ -29,7 +28,7 @@ let obstacleX = randomPosition(500);
 let obstacleY = randomPosition(500);
 
 let startTime = Date.now();
-let SECONDS_PER_ROUND = 5;
+let SECONDS_PER_ROUND = 20;
 let elapsedTime = 0;
 let count=0;
 let highscore = 0;
@@ -40,15 +39,37 @@ let obstacleDirectionX = 1;
 let obstacleDirectionY = 1;
 
 let herocaughtObstacle=false;
+let coinSound;
+let loseSound;
+
 
 function randomPosition(num) {
   return Math.floor(Math.random() * num);
 }
 
+// sound
 
-function resetGame() {
-  location.reload();
-}
+coinSound = new Audio("/audio/jump.wav");
+loseSound = new Audio("/audio/gameover.wav");
+
+var audio = document.getElementById("audio");
+var isPlaying = false;
+
+function togglePlay() {
+  if (isPlaying) {
+    audio.pause()
+  } else {
+    audio.play();
+  }
+};
+audio.onplaying = function() {
+  isPlaying = true;
+};
+audio.onpause = function() {
+  isPlaying = false;
+};
+
+
 
 function loadImages() {
   bgImage = new Image();
@@ -62,14 +83,14 @@ function loadImages() {
     // show the hero image
     heroReady = true;
   };
-  heroImage.src = "images/hero2.png";
+  heroImage.src = "images/hero1.png";
 
   monsterImage = new Image();
   monsterImage.onload = function () {
     // show the monster image
     monsterReady = true;
   };
-  monsterImage.src = "images/monster1.png";
+  monsterImage.src = "images/coin.png";
 
   obstacleImage = new Image();
   obstacleImage.onload = function () {
@@ -100,11 +121,9 @@ let update = function () {
   herocaughtMonster(); 
     if (isOutOfTime) {
       gameOver();
-      //restartGame();
       return;
     }
     if(herocaughtObstacle){
-      
       gameOver();
       return;
     }
@@ -115,29 +134,27 @@ let update = function () {
       checkCollision();
 
       
-      
-
   }
 
 
   function restartGame() {
-    console.log("reset");
-    document.getElementById("highscore").innerHTML = `High Score = ${highscore}`
-    console.log("high",highscore)
+    
+    document.getElementById("highscore").innerHTML = `${highscore}`
     count=0;
-    document.getElementById("count").innerHTML = `Score = ${count}`
+    document.getElementById("count").innerHTML = `${count}`
+
     startTime = Date.now();
-    SECONDS_PER_ROUND = 5;
+    SECONDS_PER_ROUND = 21;
     elapsedTime = 0;
-    timer
+    timer;
+
     keysDown = {};
-  
-    let heroX = canvas.width / 2;
-    let heroY = canvas.height / 2;
-    let monsterX = 100;
-    let monsterY = 100;
-    let obstacleX = randomPosition(500);
-    let obstacleY = randomPosition(500);
+    heroX = canvas.width / 2;
+    heroY = canvas.height / 2;
+    monsterX = 100;
+    monsterY = 100;
+    obstacleX = randomPosition(500);
+    obstacleY = randomPosition(500);
   }
 
 
@@ -164,32 +181,28 @@ function upScore() {
   monsterX = randomPosition(550)
   monsterY =  randomPosition(550)
 
-  document.getElementById("count").innerHTML =`Score : ${count}`;
+  document.getElementById("count").innerHTML =`${count}`;
   
   if (highscore < count) {
     highscore = count;
-    document.getElementById("highscore").innerHTML = `High Score = ${highscore}`;
+    document.getElementById("highscore").innerHTML = `${highscore}`;
 }
 }
 
 
 function checkCollision() {
    herocaughtObstacle =
-    heroX <= (obstacleX + 20)
-  && obstacleX <= (heroX + 20)
-  && heroY <= (obstacleY + 20)
-  && obstacleY <= (heroY + 20);
+    heroX <= (obstacleX + 30)
+  && obstacleX <= (heroX + 30)
+  && heroY <= (obstacleY + 30)
+  && obstacleY <= (heroY + 30);
   if(herocaughtObstacle) {
     
-    gameOver()
+    gameOver();
     
     obstacleX = randomPosition(500)
     obstacleY = randomPosition(500)
-    
-    monsterX = randomPosition(550)
-    monsterY =  randomPosition(550)
-  
-    document.getElementById("count").innerHTML =`Score : ${count}`;
+
   }
 }
 
@@ -202,6 +215,7 @@ function herocaughtMonster() {
   && monsterY <= (heroY + 50);
   if (herocaughtMonster) {
         upScore();
+        coinSound.play();
     }
   
 };
@@ -238,15 +252,15 @@ function stopClock() {
 
 timer = setInterval(() => {
     elapsedTime += 1;
-    document.getElementById("timer").innerHTML = ` Remaining Time : ${SECONDS_PER_ROUND - elapsedTime}`;
+    document.getElementById("timer").innerHTML = `${SECONDS_PER_ROUND - elapsedTime}`;
   }, 1000);
 
 
 
 var render = function () {
 
-  obstacleX += obstacleDirectionX * 2;
-  obstacleY += obstacleDirectionY * 2;
+  obstacleX += obstacleDirectionX * 4;
+  obstacleY += obstacleDirectionY * 4;
 
   if (obstacleX > canvas.width - 50 || obstacleX < 0) {
   obstacleDirectionX = -obstacleDirectionX;
@@ -273,7 +287,7 @@ var render = function () {
   const isOutOfTime = SECONDS_PER_ROUND - elapsedTime <= 0;
   herocaughtMonster();
   if (isOutOfTime||herocaughtObstacle) {
-    ctx.font = "40px";
+    ctx.fontsize = "50px";
     ctx.fillStyle = "red";
     ctx.textAlign = "center";
     ctx.fillText(` GAME OVER!!!`, 300, 30);
@@ -282,17 +296,10 @@ var render = function () {
 
 
 function gameOver() {
-  console.log('over')
   clearInterval(timer);
   isOutOfTime = true;
 }
 
-
-/**
- * The main game loop. Most every game will have two distinct parts:
- * update (updates the state of the game, in this case our hero and monster)
- * render (based on the state of our game, draw the right things)
- */
 var main = function () {
 
   update(); 

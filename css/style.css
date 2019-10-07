@@ -8,15 +8,21 @@
 canvas {
   padding-left: 0;
   padding-right: 0;
-  margin-left: auto;
-  margin-right: auto;
   display: block;
 }
 
 
 .container {
-  margin-left: auto;
-  margin-right: auto;
   display: flex;
-  margin: 20px;
+  padding : 20px;
+}
+
+.logo {
+  padding-left: 0;
+  padding-right: 0;
+  display: block;
+}
+
+.game {
+  margin : 20px;
 }
