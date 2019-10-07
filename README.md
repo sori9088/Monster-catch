@@ -1,4 +1,4 @@
-# CoderSchool FTW - * Nam, the Monster Hunter *
+# CoderSchool FTW - * M A R I O C A T C H *
 
 Created with love by: HANSOL PARK
   
