@@ -29,7 +29,7 @@ let obstacleX = randomPosition(500);
 let obstacleY = randomPosition(500);
 
 let startTime = Date.now();
-const SECONDS_PER_ROUND = 20;
+let SECONDS_PER_ROUND = 5;
 let elapsedTime = 0;
 let count=0;
 let highscore = 0;
@@ -39,7 +39,7 @@ let keysDown = {};
 let obstacleDirectionX = 1;
 let obstacleDirectionY = 1;
 
-
+let herocaughtObstacle=false;
 
 function randomPosition(num) {
   return Math.floor(Math.random() * num);
@@ -97,28 +97,39 @@ function setupKeyboardListeners() {
 let update = function () {
  
   const isOutOfTime = SECONDS_PER_ROUND - elapsedTime <= 0;
+  herocaughtMonster(); 
     if (isOutOfTime) {
+      gameOver();
+      //restartGame();
+      return;
+    }
+    if(herocaughtObstacle){
+      
       gameOver();
       return;
     }
     
       move(); //플레이어 움직임
       screenoff(); //스크린밖으로 나가면 다시 돌아옴
-      herocaughtMonster(); //몬스터 
+      // herocaughtMonster(); //몬스터 
       checkCollision();
 
+      
       
 
   }
 
 
   function restartGame() {
+    console.log("reset");
     document.getElementById("highscore").innerHTML = `High Score = ${highscore}`
-    
+    console.log("high",highscore)
     count=0;
+    document.getElementById("count").innerHTML = `Score = ${count}`
     startTime = Date.now();
-    SECONDS_PER_ROUND = 20;
+    SECONDS_PER_ROUND = 5;
     elapsedTime = 0;
+    timer
     keysDown = {};
   
     let heroX = canvas.width / 2;
@@ -163,15 +174,18 @@ function upScore() {
 
 
 function checkCollision() {
-  const herocaughtObstacle =
+   herocaughtObstacle =
     heroX <= (obstacleX + 20)
   && obstacleX <= (heroX + 20)
   && heroY <= (obstacleY + 20)
   && obstacleY <= (heroY + 20);
   if(herocaughtObstacle) {
+    
+    gameOver()
+    
     obstacleX = randomPosition(500)
     obstacleY = randomPosition(500)
-    count -= 1;
+    
     monsterX = randomPosition(550)
     monsterY =  randomPosition(550)
   
@@ -257,26 +271,20 @@ var render = function () {
   }
 
   const isOutOfTime = SECONDS_PER_ROUND - elapsedTime <= 0;
-
-  if (isOutOfTime) {
+  herocaughtMonster();
+  if (isOutOfTime||herocaughtObstacle) {
     ctx.font = "40px";
     ctx.fillStyle = "red";
     ctx.textAlign = "center";
     ctx.fillText(` GAME OVER!!!`, 300, 30);
-  } else {
-    ctx.font = "30px";
-    ctx.fillText(
-      `Seconds Remaining: ${SECONDS_PER_ROUND - elapsedTime}`,
-      300,
-      30
-    );
   }
 };
 
 
 function gameOver() {
+  console.log('over')
   clearInterval(timer);
-  return;
+  isOutOfTime = true;
 }
 
 
